@@ -5,4 +5,4 @@ streamlit
 matplotlib
 seaborn
 keras==2.2.5
-tensorflow==1.14
+tensorflow-cpu
