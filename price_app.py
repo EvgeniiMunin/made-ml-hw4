@@ -14,9 +14,11 @@ import pickle
 register_matplotlib_converters()
 plt.style.use('default')
 
-from app import read_preprocess
-from app import predict
-
+import sys
+# insert at 1, 0 is the script path (or '' in REPL)
+sys.path.insert(1, './made-ml-hw4/app')
+import read_preprocess
+import predict
 
 st.set_page_config(layout="wide")
 
