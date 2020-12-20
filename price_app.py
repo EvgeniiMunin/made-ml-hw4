@@ -17,8 +17,8 @@ plt.style.use('default')
 import sys
 # insert at 1, 0 is the script path (or '' in REPL)
 sys.path.insert(1, './made-ml-hw4/app')
-import read_preprocess
-import predict
+from app import read_preprocess
+from app import predict
 
 st.set_page_config(layout="wide")
 
