@@ -5,5 +5,5 @@ streamlit
 matplotlib
 seaborn
 tensorflow==1.15.4
+keras==2.2.4
 h5py
-keras
