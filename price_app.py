@@ -76,7 +76,7 @@ model = predict.buildLstmModel(X, INCUR, OUTCUR)
 preds = predict.predict(model, X)
 targets = df[TARGET_COL][WIN_LEN:]
 preds = preds[PRED_HORIZON:]
- st.dataframe(preds)
+st.dataframe(preds)
 
 # create future date column
 pred_dates = []
