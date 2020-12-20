@@ -4,6 +4,6 @@ streamlit
 matplotlib
 seaborn
 numpy==1.18.5
-tensorflow==2.0.3
+tensorflow==1.15.4
 keras==2.2.5
 h5py==2.10.0
