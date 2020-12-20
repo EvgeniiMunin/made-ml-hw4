@@ -14,6 +14,11 @@ import pickle
 register_matplotlib_converters()
 plt.style.use('default')
 
+import sys
+# insert at 1, 0 is the script path (or '' in REPL)
+sys.path.insert(1, './made-ml-hw4/app')
+import read_preprocess
+import predict
 
 st.set_page_config(layout="wide")
 
@@ -38,13 +43,73 @@ predict_period = col1.slider('Predict period', min_value=1, max_value=7)
 predict_from = col1.date_input('Predict from')
 
 
+DAYS_BACK = 200
+PRED_HORIZON = 7
+WIN_LEN = 30
+INCUR = "BTC"
+OUTCUR = "USD"
+
+FEATURES = ["high", "low", "open", "volumefrom", "volumeto", "close"]
+TARGET_COL = "close"
+
+@st.cache
+def data_preprocess():
+    # Mutate bar
+    df = read_preprocess.parseData(DAYS_BACK, INCUR, OUTCUR)
+#     df, X, y_test, dates = read_preprocess.prepare_data(
+#         df, TARGET_COL, window_len=WIN_LEN, pred_horizon=PRED_HORIZON
+#     )
+    return read_preprocess.prepare_data(
+        df, TARGET_COL, window_len=WIN_LEN, pred_horizon=PRED_HORIZON
+    )
+
+df, X, y_test, dates = data_preprocess()
+# st.dataframe(df)
+
+# @st.cache
+# def build_model():
+#     model = predict.buildLstmModel(X, INCUR, OUTCUR)
+#     return model
+# model = build_model()
+
+model = predict.buildLstmModel(X, INCUR, OUTCUR)
+preds = predict.predict(model, X)
+targets = df[TARGET_COL][WIN_LEN:]
+preds = preds[PRED_HORIZON:]
+# st.dataframe(preds)
+
+# create future date column
+pred_dates = []
+for offset in range(1, PRED_HORIZON + 1):
+    pred_dates.append(targets.index[-1] + pd.DateOffset(offset))
+pred_index = targets.index[PRED_HORIZON:].append(pd.Index(pred_dates))
+
+# denormalize future preds
+preds_denorm = []
+prev_pred = targets[-1]
+for i in range(targets[-PRED_HORIZON:].shape[0]):
+    pred_val = targets[-PRED_HORIZON:][i] * (preds[i] + 1)
+    # print(targets[-PRED_HORIZON:][i], preds[i], pred_val)
+    preds_denorm.append(pred_val)
+    
+# denormalize historic preds on its end of window target value
+out_preds = targets[:-PRED_HORIZON] * (preds + 1)
+# print(out_preds.shape, len(preds_denorm), targets.shape, preds.shape)
+temp = list(out_preds) + preds_denorm
+# print(pred_index.shape, len(temp))
+
+
+out_preds = pd.Series(index=pred_index, data=temp, name=f'{INCUR} / {OUTCUR}')
+# return out_preds
+# st.dataframe(out_preds)
+
 
 plt.figure(figsize=(5,25))
-# plt.subplots_adjust(top = 1, bottom = 0)
-mean = 10; std = 2
-y = np.random.randn(10).reshape(-1,1) * std + mean
-df = pd.DataFrame(y, columns=['BTC'])
-df.plot(figsize=(10, 4))
+# mean = 10; std = 2
+# y = np.random.randn(10).reshape(-1,1) * std + mean
+# df = pd.DataFrame(y, columns=['BTC'])
+# df.plot(figsize=(10, 4))
+out_preds.plot(figsize=(10, 4))
 st.pyplot(plt)
 
 # Download CSV data
@@ -52,16 +117,14 @@ st.pyplot(plt)
 def filedownload(df):
     csv = df.to_csv(index=False)
     b64 = base64.b64encode(csv.encode()).decode()  # strings <-> bytes conversions
-    href = f'<a href="data:file/csv;base64,{b64}" download="crypto.csv">Download CSV File</a>'
+    href = f'<a style="text-align: center" href="data:file/csv;base64,{b64}" download="crypto.csv">Download CSV File</a>'
     return href
 
 st.markdown(filedownload(df), unsafe_allow_html=True)
 
 
-# with st.spinner(text='In progress'):
-#     time.sleep(2)
-#     st.success('Done')
-st.latex(r''' e^{i\pi} + 1 = 0 ''')
+
+# st.latex(r''' e^{i\pi} + 1 = 0 ''')
 # st.balloons()
 
 

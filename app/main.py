@@ -2,16 +2,18 @@ import pandas as pd
 import read_preprocess
 import predict
 
-DAYS_BACK = 200
-PRED_HORIZON = 7
-WIN_LEN = 30
-INCUR = "BTC"
-OUTCUR = "USD"
+def get_predict():
 
-FEATURES = ["high", "low", "open", "volumefrom", "volumeto", "close"]
-TARGET_COL = "close"
+    DAYS_BACK = 200
+    PRED_HORIZON = 7
+    WIN_LEN = 30
+    INCUR = "BTC"
+    OUTCUR = "USD"
 
-if __name__ == "__main__":
+    FEATURES = ["high", "low", "open", "volumefrom", "volumeto", "close"]
+    TARGET_COL = "close"
+
+# if __name__ == "__main__":
     df = read_preprocess.parseData(DAYS_BACK, INCUR, OUTCUR)
     df, X, y_test, dates = read_preprocess.prepare_data(
         df, TARGET_COL, window_len=WIN_LEN, pred_horizon=PRED_HORIZON
@@ -45,4 +47,5 @@ if __name__ == "__main__":
     temp = list(out_preds) + preds_denorm
     # print(pred_index.shape, len(temp))
     out_preds = pd.Series(index=pred_index, data=temp)
-    print(out_preds)
+    return out_preds
+#     print(out_preds)
