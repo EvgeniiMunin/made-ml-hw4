@@ -6,3 +6,4 @@ matplotlib
 seaborn
 keras==2.2.5
 tensorflow-cpu
+h5py==2.10.0
