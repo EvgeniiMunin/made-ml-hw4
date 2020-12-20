@@ -1,9 +1,9 @@
 pandas
-numpy==1.18.5
 requests
 streamlit
 matplotlib
 seaborn
-tensorflow==1.15.4
-keras==2.2.4
+numpy==1.18.5
+tensorflow==2.0.3
+keras==2.2.0
 h5py==2.10.0
