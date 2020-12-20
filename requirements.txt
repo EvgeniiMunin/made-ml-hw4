@@ -1,8 +1,8 @@
 pandas
 numpy
 requests
-keras
 streamlit
 matplotlib
 seaborn
-tensorflow-cpu
+keras==2.2.5
+tensorflow==1.14
