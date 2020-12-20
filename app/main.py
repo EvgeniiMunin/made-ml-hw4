@@ -3,18 +3,18 @@ import read_preprocess
 import predict
 import matplotlib.pyplot as plt
 
-def get_predict():
+#def get_predict():
 
-    DAYS_BACK = 200
-    PRED_HORIZON = 7
-    WIN_LEN = 30
-    INCUR = "BTC"
-    OUTCUR = "USD"
-    
-    FEATURES = ["high", "low", "open", "volumefrom", "volumeto", "close"]
-    TARGET_COL = "close"
+DAYS_BACK = 200
+PRED_HORIZON = 7
+WIN_LEN = 30
+INCUR = "BTC"
+OUTCUR = "USD"
 
-#if __name__ == "__main__":
+FEATURES = ["high", "low", "open", "volumefrom", "volumeto", "close"]
+TARGET_COL = "close"
+
+if __name__ == "__main__":
     df = read_preprocess.parseData(DAYS_BACK, INCUR, OUTCUR)
     df, X, y_test, dates = read_preprocess.prepare_data(
         df, TARGET_COL, window_len=WIN_LEN, pred_horizon=PRED_HORIZON
@@ -48,17 +48,17 @@ def get_predict():
     temp = list(out_preds) + preds_denorm
     # print(pred_index.shape, len(temp))
     out_preds = pd.Series(index=pred_index, data=temp)
-    return out_preds
+#    return out_preds
 #    print(out_preds)
 #    print(targets[-7:])
     
     # plot preds and targets
-#    plt.figure(figsize=(10,8))
-#    out_preds.plot()
-#    targets.plot()
-#    plt.grid()
-#    plt.legend(['prediction', 'past real'])
-#    plt.show()
+    plt.figure(figsize=(10,8))
+    out_preds.plot()
+    targets.plot()
+    plt.grid()
+    plt.legend(['prediction', 'past real'])
+    plt.show()
 
 
 
