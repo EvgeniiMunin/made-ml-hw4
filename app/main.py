@@ -3,18 +3,18 @@ import read_preprocess
 import predict
 import matplotlib.pyplot as plt
 
-#def get_predict():
+def get_predict():
 
-DAYS_BACK = 200
-PRED_HORIZON = 7
-WIN_LEN = 30
-INCUR = "BTC"
-OUTCUR = "USD"
+    DAYS_BACK = 200
+    PRED_HORIZON = 7
+    WIN_LEN = 30
+    INCUR = "BTC"
+    OUTCUR = "USD"
+    
+    FEATURES = ["high", "low", "open", "volumefrom", "volumeto", "close"]
+    TARGET_COL = "close"
 
-FEATURES = ["high", "low", "open", "volumefrom", "volumeto", "close"]
-TARGET_COL = "close"
-
-if __name__ == "__main__":
+#if __name__ == "__main__":
     df = read_preprocess.parseData(DAYS_BACK, INCUR, OUTCUR)
     df, X, y_test, dates = read_preprocess.prepare_data(
         df, TARGET_COL, window_len=WIN_LEN, pred_horizon=PRED_HORIZON
@@ -36,7 +36,6 @@ if __name__ == "__main__":
 
     # denormalize future preds check
     preds_denorm = []
-    prev_pred = targets[-1]
     for i in range(targets[-PRED_HORIZON:].shape[0]):
         pred_val = targets[-PRED_HORIZON:][i] * (preds[-PRED_HORIZON + i] + 1)
 #        print(targets[-PRED_HORIZON:][i], preds[i], pred_val)
