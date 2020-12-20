@@ -1,0 +1,13 @@
+pandas
+numpy
+requests
+json
+tensorflow
+keras
+streamlit
+matplotlib
+seaborn
+datetime
+base64
+time
+os
