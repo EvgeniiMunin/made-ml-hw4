@@ -4,6 +4,6 @@ requests
 streamlit
 matplotlib
 seaborn
-keras==2.2.5
-tensorflow==2.0.3
-h5py==2.10.0
+tensorflow==2.1.2
+h5py
+keras
