@@ -20,7 +20,7 @@ def buildLstmModel(
     model.add(Activation(activ_func))
     model.compile(loss=loss, optimizer=optimizer)
     model.load_weights(
-        './made-ml-hw4/app/saved_models/model_v1_lstm800_mod_win_7d_BTC_USD.h5'.format(incur, outcur)
+        './app/saved_models/model_v1_lstm800_mod_win_7d_BTC_USD.h5'.format(incur, outcur)
 #         "./saved_models/model_v1_lstm800_mod_win_7d_{}_{}.h5".format(incur, outcur)
     )
     return model

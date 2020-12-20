@@ -16,9 +16,9 @@ plt.style.use('default')
 
 import sys
 # insert at 1, 0 is the script path (or '' in REPL)
-sys.path.insert(1, './made-ml-hw4/app')
-import read_preprocess
-import predict
+#sys.path.insert(1, './made-ml-hw4/app')
+from app import read_preprocess
+from app import predict
 
 st.set_page_config(layout="wide")
 
@@ -76,7 +76,7 @@ model = predict.buildLstmModel(X, INCUR, OUTCUR)
 preds = predict.predict(model, X)
 targets = df[TARGET_COL][WIN_LEN:]
 preds = preds[PRED_HORIZON:]
-# st.dataframe(preds)
+st.dataframe(preds)
 
 # create future date column
 pred_dates = []
