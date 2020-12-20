@@ -18,7 +18,7 @@ import sys
 # insert at 1, 0 is the script path (or '' in REPL)
 #sys.path.insert(1, './made-ml-hw4/app')
 from app import read_preprocess
-# from app import predict
+from app import predict
 
 st.set_page_config(layout="wide")
 
