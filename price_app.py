@@ -14,8 +14,11 @@ import pickle
 register_matplotlib_converters()
 plt.style.use('default')
 
+import sys
+# insert at 1, 0 is the script path (or '' in REPL)
+#sys.path.insert(1, './made-ml-hw4/app')
 from app import read_preprocess
-from app import predict
+# from app import predict
 
 st.set_page_config(layout="wide")
 
@@ -69,17 +72,17 @@ df, X, y_test, dates = data_preprocess()
 #     return model
 # model = build_model()
 
-model = predict.buildLstmModel(X, INCUR, OUTCUR)
-preds = predict.predict(model, X)
-targets = df[TARGET_COL][WIN_LEN:]
-preds = preds[PRED_HORIZON:]
+#model = predict.buildLstmModel(X, INCUR, OUTCUR)
+#preds = predict.predict(model, X)
+#targets = df[TARGET_COL][WIN_LEN:]
+#preds = preds[PRED_HORIZON:]
 # st.dataframe(preds)
 
 # create future date column
 pred_dates = []
 for offset in range(1, PRED_HORIZON + 1):
     pred_dates.append(targets.index[-1] + pd.DateOffset(offset))
-# pred_index = targets.index[PRED_HORIZON:].append(pd.Index(pred_dates))
+pred_index = targets.index[PRED_HORIZON:].append(pd.Index(pred_dates))
 
 # denormalize future preds
 preds_denorm = []
@@ -88,33 +91,25 @@ for i in range(targets[-PRED_HORIZON:].shape[0]):
     pred_val = targets[-PRED_HORIZON:][i] * (preds[i] + 1)
     # print(targets[-PRED_HORIZON:][i], preds[i], pred_val)
     preds_denorm.append(pred_val)
-
-
-# st.dataframe(targets)
-ax = targets.plot(figsize=(10, 5), label='past')
-ax.axvline(x=targets.index[-1], color='silver', label='dividing line')
-preds_denorm = pd.Series(preds_denorm, index=pred_dates)
-# st.dataframe(preds_denorm)
-preds_denorm.plot(ax=ax, marker='.', label='prediction')
-
+    
 # denormalize historic preds on its end of window target value
-# out_preds = targets[:-PRED_HORIZON] * (preds + 1)
-# temp = list(out_preds) + preds_denorm
-# out_preds = pd.Series(index=pred_index, data=temp, name=f'{INCUR} / {OUTCUR}')
+out_preds = targets[:-PRED_HORIZON] * (preds + 1)
+# print(out_preds.shape, len(preds_denorm), targets.shape, preds.shape)
+temp = list(out_preds) + preds_denorm
+# print(pred_index.shape, len(temp))
+
+
+out_preds = pd.Series(index=pred_index, data=temp, name=f'{INCUR} / {OUTCUR}')
+# return out_preds
 # st.dataframe(out_preds)
 
 
-# plt.figure(figsize=(5,25))
+plt.figure(figsize=(5,25))
 # mean = 10; std = 2
 # y = np.random.randn(10).reshape(-1,1) * std + mean
 # df = pd.DataFrame(y, columns=['BTC'])
 # df.plot(figsize=(10, 4))
-
-# ax = out_preds.plot(figsize=(10, 4))
-ax.set(ylabel=f'{OUTCUR}', title=f'Prediction of the course {INCUR} / {OUTCUR}')
-plt.legend()
-# plt.box(False)
-# plt.grid()
+out_preds.plot(figsize=(10, 4))
 st.pyplot(plt)
 
 # Download CSV data
