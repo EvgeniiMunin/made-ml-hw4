@@ -34,7 +34,7 @@ def get_predict():
     pred_index = targets.index[PRED_HORIZON:].append(pd.Index(pred_dates))
     # print(pred_index.shape, pred_index)
 
-    # denormalize future preds
+    # denormalize future preds check
     preds_denorm = []
     prev_pred = targets[-1]
     for i in range(targets[-PRED_HORIZON:].shape[0]):

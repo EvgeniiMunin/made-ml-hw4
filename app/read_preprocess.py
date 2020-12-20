@@ -51,7 +51,7 @@ def prepare_data(df, target_col, window_len=10, pred_horizon=5, zero_base=True):
         print('test dates: ', dates[-i])
         print('ytest: ', y_test[-i:-i+1])
 
-    # make offset by value of horizon
+    # make offset by value of horizon check
     X = X[:-pred_horizon]
     dates = dates[:-pred_horizon]
     df = df[:-pred_horizon]
