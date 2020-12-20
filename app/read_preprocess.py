@@ -45,15 +45,22 @@ def prepare_data(df, target_col, window_len=10, pred_horizon=5, zero_base=True):
     # extract targets - the point after each win_len segment + offset of predict_horizon
     y_test = df[target_col][window_len + pred_horizon :]
 
+
+    for i in range(20):
+        print()
+        print('test dates: ', dates[-i])
+        print('ytest: ', y_test[-i:-i+1])
+
     # make offset by value of horizon
-    # X = X[:-pred_horizon]
-    # dates = dates[:-pred_horizon]
-    # df = df[:-pred_horizon]
+    X = X[:-pred_horizon]
+    dates = dates[:-pred_horizon]
+    df = df[:-pred_horizon]
 
     # normalize y on its end of window price
     y_test = y_test.values
     if zero_base:
-        y_test = y_test / df[target_col][: -window_len - pred_horizon].values - 1
+#        y_test = y_test / df[target_col][: -window_len - pred_horizon].values - 1
+        y_test = y_test / df[target_col][:-window_len].values - 1
 
     return df, X, y_test, dates
 

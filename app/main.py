@@ -1,6 +1,7 @@
 import pandas as pd
 import read_preprocess
 import predict
+import matplotlib.pyplot as plt
 
 def get_predict():
 
@@ -9,11 +10,11 @@ def get_predict():
     WIN_LEN = 30
     INCUR = "BTC"
     OUTCUR = "USD"
-
+    
     FEATURES = ["high", "low", "open", "volumefrom", "volumeto", "close"]
     TARGET_COL = "close"
 
-# if __name__ == "__main__":
+#if __name__ == "__main__":
     df = read_preprocess.parseData(DAYS_BACK, INCUR, OUTCUR)
     df, X, y_test, dates = read_preprocess.prepare_data(
         df, TARGET_COL, window_len=WIN_LEN, pred_horizon=PRED_HORIZON
@@ -37,8 +38,8 @@ def get_predict():
     preds_denorm = []
     prev_pred = targets[-1]
     for i in range(targets[-PRED_HORIZON:].shape[0]):
-        pred_val = targets[-PRED_HORIZON:][i] * (preds[i] + 1)
-        # print(targets[-PRED_HORIZON:][i], preds[i], pred_val)
+        pred_val = targets[-PRED_HORIZON:][i] * (preds[-PRED_HORIZON + i] + 1)
+#        print(targets[-PRED_HORIZON:][i], preds[i], pred_val)
         preds_denorm.append(pred_val)
 
     # denormalize historic preds on its end of window target value
@@ -48,4 +49,18 @@ def get_predict():
     # print(pred_index.shape, len(temp))
     out_preds = pd.Series(index=pred_index, data=temp)
     return out_preds
-#     print(out_preds)
+#    print(out_preds)
+#    print(targets[-7:])
+    
+    # plot preds and targets
+#    plt.figure(figsize=(10,8))
+#    out_preds.plot()
+#    targets.plot()
+#    plt.grid()
+#    plt.legend(['prediction', 'past real'])
+#    plt.show()
+
+
+
+
+
