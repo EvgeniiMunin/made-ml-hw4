@@ -7,7 +7,7 @@ FEATURES = ["high", "low", "open", "volumefrom", "volumeto", "close"]
 TARGET_COL = "close"
 
 
-def parseData(days_back, incur, outcur):
+def parseData(days_back, incur, outcur, features):
     endpoint = "https://min-api.cryptocompare.com/data/histoday"
     res = requests.get(
         endpoint + "?fsym={}&tsym={}&limit={}".format(incur, outcur, days_back)
@@ -15,7 +15,7 @@ def parseData(days_back, incur, outcur):
     df = pd.DataFrame(json.loads(res.content)["Data"])
     df = df.set_index("time")
     df.index = pd.to_datetime(df.index, unit="s")
-    return df[FEATURES]
+    return df[features]
 
 
 def extract_window_data(df, window_len=5, zero_base=True):
@@ -44,18 +44,17 @@ def prepare_data(df, target_col, window_len=10, pred_horizon=5, zero_base=True):
 
     # extract targets - the point after each win_len segment + offset of predict_horizon
     y_test = df[target_col][window_len + pred_horizon :]
-    y_test_prevs = df[target_col][window_len + pred_horizon - 1:-1]
+    y_test_prevs = df[target_col][window_len + pred_horizon - 1 : -1]
 
     # normalize y on its end of window price
     y_test = y_test.values / y_test_prevs.values - 1
-    
-#    y_test = y_test.values
-#    y_test = y_test / df[target_col][window_len:][:-pred_horizon].values - 1
-#    y_test = y_test / df[target_col][:-window_len].values - 1
+
+    #    y_test = y_test.values
+    #    y_test = y_test / df[target_col][window_len:][:-pred_horizon].values - 1
+    #    y_test = y_test / df[target_col][:-window_len].values - 1
 
     return df, X, y_test
 
 
 def normalise_zero_base(df):
     return df / df.iloc[0] - 1
-
