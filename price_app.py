@@ -8,7 +8,11 @@ from pandas.plotting import register_matplotlib_converters
 import seaborn as sns
 from datetime import datetime
 import base64
-from app import read_preprocess, main
+from app import read_preprocess, predict_lstm, predict_linreg
+
+import plotly.express as px
+import plotly.graph_objects as go
+from PIL import Image
 
 register_matplotlib_converters()
 plt.style.use("default")
@@ -21,24 +25,27 @@ TARGET_COL = "close"
 
 st.set_page_config(layout="wide")
 
-st.title("Crypto Price App")
+st.title("Currency Rate Prediction App")
 st.markdown(
     """
-This app retrieves cryptocurrency prices for the top 100 cryptocurrency from the **CoinMarketCap**!
+This app retrieves currency prices for Bitcoin, USD, EUR, RUB from **min-api crypto compare** 
+and predicts the close exchange rate for several days in the future.
 """
 )
 
-expander_bar = st.beta_expander("About")
-expander_bar.markdown(
+# expander_bar = st.beta_expander("About")
+st.markdown(
     """
-* **Python libraries:** base64, pandas, streamlit, numpy, matplotlib, seaborn, BeautifulSoup, requests, json, time
-* **Data source:** [CoinMarketCap](http://coinmarketcap.com).
-* **Credit:** Web scraper adapted from the Medium article *[Web Scraping Crypto Prices With Python](https://towardsdatascience.com/web-scraping-crypto-prices-with-python-41072ea5b5bf)* written by [Bryan Feng](https://medium.com/@bryanf).
+* **Python libraries:** scikit-learn, keras, base64, streamlit, plotly, pandas, numpy, requests, json
+* **Data source:** Data resource API is available at [min-api crypto compare](https://min-api.cryptocompare.com/data/histoday?fsym=BTC&tsym=CAD&limit=500)
 """
 )
 
 # define left column sidebar
 col1 = st.sidebar
+
+# add logo
+st.sidebar.image(image=Image.open("logo.jpeg"), width=200)
 
 # select currency
 col1.header("Input Options")
@@ -60,32 +67,45 @@ outcur = currency_price_unit.split()[1]
 print("check price unit: ", currency_price_unit, incur, outcur)
 
 # select period
-pred_horizon = col1.slider("Predict period (days)", min_value=1, max_value=7)
+pred_horizon = col1.slider("Predict period (days)", min_value=1, max_value=3)
 print("check pred horizon: ", pred_horizon)
 
 # select calendar date
 predict_from = col1.date_input("Predict from")
 print("check predict from: ", predict_from, type(predict_from))
 
+# select model
+model_choice = col1.selectbox("Select model", ("LSTM (slide win)", "Lin Reg (lags 40)"))
+
 # check target dates with pred_from+pred_horizon
 time_back = DAYS_BACK + (datetime.now().date() - predict_from).days
 df = read_preprocess.parseData(time_back, incur, outcur, ALL_FEATURES)
+dforig = read_preprocess.parseData(time_back, incur, outcur, ALL_FEATURES)
 df = df[df.index < datetime(predict_from.year, predict_from.month, predict_from.day)]
 
 # compute preds
-out_preds, targets, preds_denorm, df = main.get_predict(df, incur, outcur, pred_horizon)
+if model_choice == "LSTM (slide win)":
+    preds, _, new_preds = predict_lstm.get_predict(df, incur, outcur, pred_horizon)
+else:
+    preds, new_preds = predict_linreg.get_predict(df, incur, outcur, pred_horizon)
+print("check")
+print(preds)
+print(preds.to_frame())
+
+dfhist = dforig[
+    (dforig.index >= preds.index.min()) & (dforig.index <= new_preds.index.max())
+]
+preds = preds.to_frame()
+preds.columns = ["hist preds"]
 
 # plots
-ax = targets.plot(figsize=(10, 5), label="past")
-ax.axvline(x=targets.index[-1], color="silver", label="dividing line")
-preds_denorm.plot(ax=ax, marker=".", label="prediction")
-out_preds[:-pred_horizon].plot(ax=ax, marker=".", label="prediction past")
+fig = px.line(preds)
+fig.add_trace(go.Scatter(x=dfhist.index, y=dfhist["close"], mode="lines", name="hist"))
+fig.add_trace(
+    go.Scatter(x=new_preds.index, y=new_preds, mode="markers", name="new preds")
+)
+st.plotly_chart(fig, use_container_width=True)
 
-ax.set(ylabel=f"{outcur}", title=f"Prediction of the course {incur} / {outcur}")
-plt.legend()
-plt.box(False)
-plt.grid()
-st.pyplot(plt)
 
 # Download CSV data
 def filedownload(df):
@@ -94,5 +114,14 @@ def filedownload(df):
     href = f'<a style="text-align: center" href="data:file/csv;base64,{b64}" download="crypto.csv">Download CSV File</a>'
     return href
 
+
+st.header("Prediction")
+st.dataframe(new_preds)
+
+st.header("Last 5 days history")
+st.dataframe(dfhist.iloc[-5:])
+
+st.header("Statistics")
+st.dataframe(dfhist.describe())
 
 st.markdown(filedownload(df), unsafe_allow_html=True)

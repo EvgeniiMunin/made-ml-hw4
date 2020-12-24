@@ -49,10 +49,6 @@ def prepare_data(df, target_col, window_len=10, pred_horizon=5, zero_base=True):
     # normalize y on its end of window price
     y_test = y_test.values / y_test_prevs.values - 1
 
-    #    y_test = y_test.values
-    #    y_test = y_test / df[target_col][window_len:][:-pred_horizon].values - 1
-    #    y_test = y_test / df[target_col][:-window_len].values - 1
-
     return df, X, y_test
 
 
