@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # %matplotlib inline
 from pandas.plotting import register_matplotlib_converters
 import seaborn as sns
-from datetime import datetime
+from datetime import datetime, timedelta
 import base64
 from app import read_preprocess, predict_lstm, predict_linreg
 
@@ -72,6 +72,7 @@ print("check pred horizon: ", pred_horizon)
 
 # select calendar date
 predict_from = col1.date_input("Predict from")
+predict_from += timedelta(days=1)
 print("check predict from: ", predict_from, type(predict_from))
 
 # select model
