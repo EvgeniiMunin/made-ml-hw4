@@ -14,3 +14,10 @@
 [Демоверсия проекта](https://made-ml-hw4.herokuapp.com/)
 
 ## Тема проекта: Предсказание валютных котировок
+
+|Model           |MAE val                   |
+|----------------|-------------------------------|
+|Naive model: Moving average (40 days)|1355|
+|Linear Regression + Lag features (40 days)| 704|
+|XGBRegressor| 2173|
+|LSTM + Sliding window (40 days)| 1949|
