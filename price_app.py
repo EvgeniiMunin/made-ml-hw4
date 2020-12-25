@@ -13,6 +13,7 @@ from app import read_preprocess, predict_lstm, predict_linreg
 import plotly.express as px
 import plotly.graph_objects as go
 from PIL import Image
+from sklearn.metrics import mean_absolute_error
 
 register_matplotlib_converters()
 plt.style.use("default")
@@ -33,9 +34,10 @@ and predicts the close exchange rate for several days in the future.
 """
 )
 
-# expander_bar = st.beta_expander("About")
-st.markdown(
+expander_bar = st.beta_expander("About")
+expander_bar.write(
     """
+* **Team:** Andrei Starikov, Nikolai Diakin, Ilya Avilov, Orkhan Gadzhily, Evgenii Munin
 * **Python libraries:** scikit-learn, keras, base64, streamlit, plotly, pandas, numpy, requests, json
 * **Data source:** Data resource API is available at [min-api crypto compare](https://min-api.cryptocompare.com/data/histoday?fsym=BTC&tsym=CAD&limit=500)
 """
@@ -99,14 +101,41 @@ dfhist = dforig[
 preds = preds.to_frame()
 preds.columns = ["hist preds"]
 
-# plots
+# plots. fill in bewteen max min
 fig = px.line(preds)
 fig.add_trace(go.Scatter(x=dfhist.index, y=dfhist["close"], mode="lines", name="hist"))
 fig.add_trace(
+    go.Scatter(
+        x=dfhist.index,
+        y=dfhist["high"],
+        marker=dict(color="#444"),
+        line=dict(width=0),
+        mode="lines",
+        fillcolor="rgba(68, 68, 68, 0.3)",
+        fill="tonexty",
+        showlegend=False,
+        name="upper bound",
+    )
+)
+fig.add_trace(
+    go.Scatter(
+        x=dfhist.index,
+        y=dfhist["low"],
+        marker=dict(color="#444"),
+        line=dict(width=0),
+        mode="lines",
+        fillcolor="rgba(68, 68, 68, 0.3)",
+        fill="tonexty",
+        showlegend=False,
+        name="lower bound",
+    )
+)
+
+fig.add_trace(
     go.Scatter(x=new_preds.index, y=new_preds, mode="markers", name="new preds")
 )
-st.plotly_chart(fig, use_container_width=True)
 
+st.plotly_chart(fig, use_container_width=True)
 
 # Download CSV data
 def filedownload(df):
@@ -116,13 +145,14 @@ def filedownload(df):
     return href
 
 
+# show metrics
+mae = mean_absolute_error(dfhist.iloc[-5:]["close"], preds[-6:-1])
+if mae > 0.01:
+    st.markdown("Last 5 days MAE: {}".format(round(mae, 2)))
+else:
+    st.markdown("Last 5 days MAE: {}".format(mae))
+
 st.header("Prediction")
 st.dataframe(new_preds)
-
-st.header("Last 5 days history")
-st.dataframe(dfhist.iloc[-5:])
-
-st.header("Statistics")
-st.dataframe(dfhist.describe())
 
 st.markdown(filedownload(df), unsafe_allow_html=True)
