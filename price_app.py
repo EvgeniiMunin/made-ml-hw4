@@ -96,7 +96,7 @@ print(preds.to_frame())
 
 dfhist = dforig[
     (dforig.index >= preds.index.min()) & (dforig.index <= new_preds.index.max())
-]
+    ]
 preds = preds.to_frame()
 preds.columns = ["hist preds"]
 
@@ -136,6 +136,7 @@ fig.add_trace(
 
 st.plotly_chart(fig, use_container_width=True)
 
+
 # Download CSV data
 def filedownload(df):
     csv = df.to_csv(index=False)
@@ -152,6 +153,8 @@ else:
     st.markdown("Last 5 days MAE: {}".format(mae))
 
 st.header("Prediction")
-st.dataframe(new_preds)
+new_preds_df = new_preds.to_frame(name="Closed price").applymap('{:,.1f}'.format)
+new_preds_df.index = new_preds_df.index.strftime('%Y-%m-%d')
+st.dataframe(new_preds_df)
 
 st.markdown(filedownload(df), unsafe_allow_html=True)
