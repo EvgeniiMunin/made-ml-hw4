@@ -9,7 +9,7 @@
 |Дякин Николай   |ML-11  |https://github.com/nickdndev    |DS, Frontend     |
 |Мунин Евгений   |ML-12  |https://github.com/EvgeniiMunin |DS, ML, Frontend |
 |Орхан Гаджилы   |DS-12  |https://github.com/Fianketto    |DS, PM           |
-|Стариков Андрей |ML-12  |https://github.com/andyst75     |DS, ML, DevOps   |
+|Стариков Андрей |ML-12  |https://github.com/andyst75     |ML, DevOps       |
 
 [Демоверсия проекта](https://made-ml-hw4.herokuapp.com/)
 
