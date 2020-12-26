@@ -1,9 +1,8 @@
-pandas
+pandas==1.1.5
 requests
-streamlit
+streamlit==0.73.1
 matplotlib
 plotly
-seaborn
 scikit-learn==0.22.2.post1
 numpy==1.18.5
 tensorflow==1.15.4
