@@ -1,9 +1,6 @@
 from tensorflow.keras.layers import Activation, Dense, Dropout, LSTM
 from tensorflow.keras.models import Sequential
 
-# from keras.layers import Activation, Dense, Dropout, LSTM
-# from keras.models import Sequential
-
 
 def buildLstmModel(
     X,
