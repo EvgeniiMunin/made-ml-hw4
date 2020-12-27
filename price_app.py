@@ -25,7 +25,7 @@ TARGET_COL = "close"
 
 st.set_page_config(layout="wide")
 
-st.title("Currency Rate Prediction App")
+st.title("Currency Excange Rate Prediction App")
 st.markdown(
     """
 This app retrieves currency prices for Bitcoin, USD, EUR, RUB from **min-api crypto compare** 
