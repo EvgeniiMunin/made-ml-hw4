@@ -79,9 +79,13 @@ print("check predict from: ", predict_from, type(predict_from))
 # select model
 model_choice = col1.selectbox("Select model", ("LSTM (slide win)", "Lin Reg (lags 40)"))
 
+@st.cache
+def download_data(time_back, incur, outcur, ALL_FEATURES):
+    return read_preprocess.parseData(time_back, incur, outcur, ALL_FEATURES)
+
 # check target dates with pred_from+pred_horizon
 time_back = DAYS_BACK + (datetime.now().date() - predict_from).days
-df = read_preprocess.parseData(time_back, incur, outcur, ALL_FEATURES)
+df = download_data(time_back, incur, outcur, ALL_FEATURES)
 dforig = read_preprocess.parseData(time_back, incur, outcur, ALL_FEATURES)
 df = df[df.index < datetime(predict_from.year, predict_from.month, predict_from.day)]
 
@@ -155,6 +159,6 @@ else:
 st.header("Prediction")
 new_preds_df = new_preds.to_frame(name="Closed price").applymap('{:,.1f}'.format)
 new_preds_df.index = new_preds_df.index.strftime('%Y-%m-%d')
-st.dataframe(new_preds_df)
+st.dataframe(new_preds_df.T)
 
 st.markdown(filedownload(df), unsafe_allow_html=True)
