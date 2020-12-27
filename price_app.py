@@ -36,7 +36,7 @@ and predicts the close exchange rate for several days in the future.
 expander_bar = st.beta_expander("About")
 expander_bar.write(
     """
-* **Team:** Andrei Starikov, Nikolai Diakin, Ilya Avilov, Orkhan Gadzhily, Evgenii Munin
+* **Team:** Evgenii Munin, Ilya Avilov, Orkhan Gadzhily, Nikolai Diakin, Andrei Starikov 
 * **Python libraries:** scikit-learn, keras, base64, streamlit, plotly, pandas, numpy, requests, json
 * **Data source:** Data resource API is available at [min-api crypto compare](https://min-api.cryptocompare.com/data/histoday?fsym=BTC&tsym=CAD&limit=500)
 """
@@ -68,7 +68,7 @@ outcur = currency_price_unit.split()[1]
 print("check price unit: ", currency_price_unit, incur, outcur)
 
 # select period
-pred_horizon = col1.slider("Predict period (days)", min_value=1, max_value=3)
+pred_horizon = col1.slider("Prediction horizon, days", min_value=1, max_value=3)
 print("check pred horizon: ", pred_horizon)
 
 # select calendar date
@@ -141,7 +141,7 @@ st.plotly_chart(fig, use_container_width=True)
 def filedownload(df):
     csv = df.to_csv(index=False)
     b64 = base64.b64encode(csv.encode()).decode()  # strings <-> bytes conversions
-    href = f'<a style="text-align: center" href="data:file/csv;base64,{b64}" download="crypto.csv">Download CSV File</a>'
+    href = f'<a href="data:file/csv;base64,{b64}" download="crypto.csv">Download CSV File</a>'
     return href
 
 
