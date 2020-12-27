@@ -37,10 +37,13 @@ expander_bar = st.beta_expander("About")
 expander_bar.write(
     """
 * **Team:** Evgenii Munin, Ilya Avilov, Orkhan Gadzhily, Nikolai Diakin, Andrei Starikov 
+* **Git Perository:** https://github.com/EvgeniiMunin/made-ml-hw4
 * **Python libraries:** scikit-learn, keras, base64, streamlit, plotly, pandas, numpy, requests, json
 * **Data source:** Data resource API is available at [min-api crypto compare](https://min-api.cryptocompare.com/data/histoday?fsym=BTC&tsym=CAD&limit=500)
 """
 )
+# href = f'<a href="https://github.com/EvgeniiMunin/made-ml-hw4">Git Perository</a>'
+# expander_bar.markdown(href, unsafe_allow_html=True)
 
 # define left column sidebar
 col1 = st.sidebar
